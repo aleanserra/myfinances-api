@@ -1,37 +1,35 @@
 package com.aalmeida.myfinances.service;
 
-
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
 import com.aalmeida.myfinances.exceptions.BusinessRuleException;
-import com.aalmeida.myfinances.model.entity.User;
 import com.aalmeida.myfinances.model.repository.UserRepository;
+import com.aalmeida.myfinances.service.impl.UserServiceImpl;
 
-@SpringBootTest
+
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 public class UserServiceTest {
 	
-	@Autowired
 	UserService service;
-	
-	@Autowired
 	UserRepository repository;
 	
+	@BeforeEach
+	public void setUp() {
+		repository = Mockito.mock(UserRepository.class);
+		service = new UserServiceImpl(repository);
+	}
+			
 	@Test
 	public void shouldValidateEmail(){
 		//cenario
 		
-		UserRepository userRepositoryMock = Mockito.mock(UserRepository.class);
-		
-		repository.deleteAll();
+		Mockito.when(repository.existsByEmail(Mockito.anyString())).thenReturn(false);
 		
 		//acao
 		service.emailValidate("email@email.com");
@@ -40,10 +38,10 @@ public class UserServiceTest {
 	@Test
 	public void mustShowErrorWhenValidatingEmailWhenThereIsRegistered() {
 		//cenario
-		User user = User.builder().name("user").email("email@email.com").build();
-		repository.save(user);
+		Mockito.when(repository.existsByEmail(Mockito.anyString())).thenReturn(true);
 		
 		//acao
+		//junit 5
 		Assertions.assertThrows(BusinessRuleException.class, () -> service.emailValidate("email@email.com"));
 	}
 }
