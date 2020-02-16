@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
 			throw new ErrorAuthenticate("User not found for the given email");
 		}
 		
-		if(!user.get().getEmail().equals(password)) {
+		if(!user.get().getPassword().equals(password)) {
 			throw new ErrorAuthenticate("Invalid password");
 		}
 		
