@@ -3,6 +3,7 @@ package com.aalmeida.myfinances.service.impl;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -96,5 +97,11 @@ public class ReleaseServiceImpl implements ReleaseService {
 		if(release.getType() == null) {
 			throw new BusinessRuleException("Invalid type");
 		}
+	}
+
+	@Override
+	public Optional<Release> getById(Long id) {
+		
+		return repository.findById(id);
 	}
 }

@@ -20,13 +20,17 @@ import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import com.aalmeida.myfinances.model.enums.ReleaseStatus;
 import com.aalmeida.myfinances.model.enums.ReleaseType;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table (name="release", schema ="finances")
 @Builder
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Release {
 
 	@Id

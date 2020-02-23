@@ -1,5 +1,7 @@
 package com.aalmeida.myfinances.service;
 
+import java.util.Optional;
+
 import com.aalmeida.myfinances.model.entity.User;
 
 public interface UserService {
@@ -9,4 +11,6 @@ public interface UserService {
 	User saveUser(User user);
 	
 	void emailValidate(String email);
+	
+	Optional<User> getById(long id);
 }

@@ -13,15 +13,14 @@ import com.aalmeida.myfinances.exceptions.ErrorAuthenticate;
 import com.aalmeida.myfinances.model.entity.User;
 import com.aalmeida.myfinances.service.UserService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserResource {
 	
-	private UserService service;
-	
-	public UserResource(UserService service) {
-		this.service = service;
-	}
+	private final UserService service;
 	
 	@PostMapping("/authenticate")
 	public ResponseEntity authenticate(@RequestBody UserDTO dto) {

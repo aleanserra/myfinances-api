@@ -1,6 +1,7 @@
 package com.aalmeida.myfinances.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.aalmeida.myfinances.model.entity.Release;
 import com.aalmeida.myfinances.model.enums.ReleaseStatus;
@@ -18,4 +19,6 @@ public interface ReleaseService {
 	void updateStatus(Release release, ReleaseStatus status);
 	
 	void validate(Release release);
+	
+	Optional<Release> getById(Long id);
 }
