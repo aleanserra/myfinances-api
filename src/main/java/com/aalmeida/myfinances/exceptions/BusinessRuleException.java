@@ -6,3 +6,5 @@ public class BusinessRuleException extends RuntimeException {
 		super(msg);
 	}
 }
+
+

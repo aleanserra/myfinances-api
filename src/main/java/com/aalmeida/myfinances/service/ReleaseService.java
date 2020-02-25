@@ -1,5 +1,6 @@
 package com.aalmeida.myfinances.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,4 +22,6 @@ public interface ReleaseService {
 	void validate(Release release);
 	
 	Optional<Release> getById(Long id);
+
+	BigDecimal obtainBalanceByUser(Long id);
 }

@@ -87,7 +87,7 @@ public class ReleaseResource {
 			new ResponseEntity("Relese not found in DB.", HttpStatus.BAD_REQUEST));
 	}
 	
-	@PutMapping("{id}/pudate-status")
+	@PutMapping("{id}/update-status")
 	public ResponseEntity updateStatus(@PathVariable("id") Long id, @RequestBody UpdateStatusDTO dto){
 		return service.getById(id).map(entity ->{
 			ReleaseStatus selectedStatus = ReleaseStatus.valueOf(dto.getStatus());

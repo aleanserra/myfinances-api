@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.aalmeida.myfinances.exceptions.BusinessRuleException;
 import com.aalmeida.myfinances.model.entity.Release;
 import com.aalmeida.myfinances.model.enums.ReleaseStatus;
+import com.aalmeida.myfinances.model.enums.ReleaseType;
 import com.aalmeida.myfinances.model.repository.ReleaseRepository;
 import com.aalmeida.myfinances.service.ReleaseService;
 
@@ -103,5 +104,22 @@ public class ReleaseServiceImpl implements ReleaseService {
 	public Optional<Release> getById(Long id) {
 		
 		return repository.findById(id);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public BigDecimal obtainBalanceByUser(Long id) {
+		BigDecimal income = repository.obtainBalanceByReleaseTypeAndUser(id, ReleaseType.INCOME);
+		BigDecimal outgo = repository.obtainBalanceByReleaseTypeAndUser(id, ReleaseType.OUTGO);
+
+		if(income == null){
+			income = BigDecimal.ZERO;
+		}
+
+		if(outgo == null){
+			outgo = BigDecimal.ZERO;
+		}
+
+		return income.subtract(outgo);
 	}
 }
