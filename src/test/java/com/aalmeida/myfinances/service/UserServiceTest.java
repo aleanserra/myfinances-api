@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -47,7 +46,7 @@ public class UserServiceTest {
 		Assertions.assertThat(userSaved.getEmail()).isEqualTo("email@email.com");
 		Assertions.assertThat(userSaved.getPassword()).isEqualTo("password");
 	}
-	
+	@Test
 	public void mustNotSaveAUserWithEmailRegistred() {
 		//cenario
 		String email = "email@email.com";

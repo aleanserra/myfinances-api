@@ -15,7 +15,7 @@ import java.util.Optional;
 import com.aalmeida.myfinances.api.dto.UserDTO;
 import com.aalmeida.myfinances.exceptions.ErrorAuthenticate;
 import com.aalmeida.myfinances.model.entity.User;
-import com.aalmeida.myfinances.service.ReleaseService;
+import com.aalmeida.myfinances.service.MovimentService;
 import com.aalmeida.myfinances.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class UserResource {
 	
 	private final UserService service;
-	private final ReleaseService releaseService;
+	private final MovimentService movimentService;
 	
 	@PostMapping("/authenticate")
 	public ResponseEntity authenticate(@RequestBody UserDTO dto) {
@@ -61,7 +61,7 @@ public class UserResource {
 		if(!user.isPresent()){
 			return new ResponseEntity(HttpStatus.NOT_FOUND);
 		}
-		BigDecimal balance = releaseService.obtainBalanceByUser(id);
+		BigDecimal balance = movimentService.obtainBalanceByUser(id);
 
 		return ResponseEntity.ok(balance);
 	}

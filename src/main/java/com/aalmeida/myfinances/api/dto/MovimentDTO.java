@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ReleaseDTO {
+public class MovimentDTO {
 	
 	private Long id;
 	private String description;

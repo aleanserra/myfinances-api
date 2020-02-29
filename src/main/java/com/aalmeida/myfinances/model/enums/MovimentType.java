@@ -1,6 +1,6 @@
 package com.aalmeida.myfinances.model.enums;
 
-public enum ReleaseType {
+public enum MovimentType {
 	
 	INCOME,
 	OUTGO

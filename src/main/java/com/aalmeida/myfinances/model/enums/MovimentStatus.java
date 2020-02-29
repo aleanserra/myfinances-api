@@ -1,6 +1,6 @@
 package com.aalmeida.myfinances.model.enums;
 
-public enum ReleaseStatus {
+public enum MovimentStatus {
 	
 	PENDING,
 	CANCELED,

@@ -17,8 +17,8 @@ import javax.persistence.Table;
 
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 
-import com.aalmeida.myfinances.model.enums.ReleaseStatus;
-import com.aalmeida.myfinances.model.enums.ReleaseType;
+import com.aalmeida.myfinances.model.enums.MovimentStatus;
+import com.aalmeida.myfinances.model.enums.MovimentType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,12 +26,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table (name="release", schema ="finances")
+@Table (name="moviment", schema ="finances")
 @Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Release {
+public class Moviment {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,16 +54,16 @@ public class Release {
 	@Column(name="value")
 	private BigDecimal value;
 	
-	@Column(name="reg_release_date")
+	@Column(name="reg_moviment_date")
 	@Convert(converter = Jsr310JpaConverters.LocalDateConverter.class)
-	private LocalDate releaseDate;
+	private LocalDate movimentDate;
 	
 	@Column(name = "type")
 	@Enumerated(value = EnumType.STRING)
-	private ReleaseType type;
+	private MovimentType type;
 	
 	@Column(name = "status")
 	@Enumerated(value = EnumType.STRING)
-	private ReleaseStatus status;
+	private MovimentStatus status;
 	
 }

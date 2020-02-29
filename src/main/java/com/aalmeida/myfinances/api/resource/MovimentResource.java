@@ -15,24 +15,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.aalmeida.myfinances.api.dto.ReleaseDTO;
+import com.aalmeida.myfinances.api.dto.MovimentDTO;
 import com.aalmeida.myfinances.api.dto.UpdateStatusDTO;
 import com.aalmeida.myfinances.exceptions.BusinessRuleException;
-import com.aalmeida.myfinances.model.entity.Release;
+import com.aalmeida.myfinances.model.entity.Moviment;
 import com.aalmeida.myfinances.model.entity.User;
-import com.aalmeida.myfinances.model.enums.ReleaseStatus;
-import com.aalmeida.myfinances.model.enums.ReleaseType;
-import com.aalmeida.myfinances.service.ReleaseService;
+import com.aalmeida.myfinances.model.enums.MovimentStatus;
+import com.aalmeida.myfinances.model.enums.MovimentType;
+import com.aalmeida.myfinances.service.MovimentService;
 import com.aalmeida.myfinances.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/releases")
+@RequestMapping("/api/moviments")
 @RequiredArgsConstructor
-public class ReleaseResource {
+public class MovimentResource {
 	
-	private final ReleaseService service;
+	private final MovimentService service;
 	private final UserService userService;
 	
 	@GetMapping
@@ -42,29 +42,29 @@ public class ReleaseResource {
 			@RequestParam(value = "year", required = false) Integer year,
 			@RequestParam("user") Long idUser
 			) {
-		Release releaseFilter = new Release();
-		releaseFilter.setDescription(description);
-		releaseFilter.setMonth(month);
-		releaseFilter.setYear(year);
+		Moviment movimentFilter = new Moviment();
+		movimentFilter.setDescription(description);
+		movimentFilter.setMonth(month);
+		movimentFilter.setYear(year);
 		
 		Optional<User> user = userService.getById(idUser);
 		
 		if(!user.isPresent()) {
 			return ResponseEntity.badRequest().body("Can not search. User not found with given id");
 		}else {
-			releaseFilter.setUser(user.get());
+			movimentFilter.setUser(user.get());
 		}
 		
-		List<Release> releases = service.search(releaseFilter);
+		List<Moviment> moviments = service.search(movimentFilter);
 		
-		return ResponseEntity.ok(releases);
+		return ResponseEntity.ok(moviments);
 	}
 	
 	@PostMapping
-	public ResponseEntity save(@RequestBody ReleaseDTO dto) {
+	public ResponseEntity save(@RequestBody MovimentDTO dto) {
 		
 		try {
-		Release entity = convert(dto);
+		Moviment entity = convert(dto);
 		service.save(entity);
 		return new  ResponseEntity(entity, HttpStatus.CREATED) ;
 		}catch (BusinessRuleException e) {
@@ -73,13 +73,13 @@ public class ReleaseResource {
 	}
 	
 	@PutMapping("{id}")
-	public ResponseEntity update(@PathVariable("id") Long id, @RequestBody ReleaseDTO dto) {
+	public ResponseEntity update(@PathVariable("id") Long id, @RequestBody MovimentDTO dto) {
 		return service.getById(id).map(entity -> {
 			try {
-				Release release = convert(dto);
-				release.setId(entity.getId());
-				service.update(release);
-				return ResponseEntity.ok(release);
+				Moviment moviment = convert(dto);
+				moviment.setId(entity.getId());
+				service.update(moviment);
+				return ResponseEntity.ok(moviment);
 			}catch (BusinessRuleException e) {
 				return ResponseEntity.badRequest().body(e.getMessage());
 			}
@@ -90,7 +90,7 @@ public class ReleaseResource {
 	@PutMapping("{id}/update-status")
 	public ResponseEntity updateStatus(@PathVariable("id") Long id, @RequestBody UpdateStatusDTO dto){
 		return service.getById(id).map(entity ->{
-			ReleaseStatus selectedStatus = ReleaseStatus.valueOf(dto.getStatus());
+			MovimentStatus selectedStatus = MovimentStatus.valueOf(dto.getStatus());
 			
 			if(selectedStatus == null) {
 				return ResponseEntity.badRequest().body("Can not be updated. Invalid status.");
@@ -116,29 +116,29 @@ public class ReleaseResource {
 		new ResponseEntity("Relese not found in DB.", HttpStatus.BAD_REQUEST));
 	}
 	
-	private Release convert(ReleaseDTO dto) {
+	private Moviment convert(MovimentDTO dto) {
 		
-		Release release = new Release();
-		release.setId(dto.getId());
-		release.setDescription(dto.getDescription());
-		release.setYear(dto.getYear());
-		release.setMonth(dto.getMonth());
-		release.setValue(dto.getValue());
+		Moviment moviment = new Moviment();
+		moviment.setId(dto.getId());
+		moviment.setDescription(dto.getDescription());
+		moviment.setYear(dto.getYear());
+		moviment.setMonth(dto.getMonth());
+		moviment.setValue(dto.getValue());
 		
 		User user = userService.getById(dto.getUser()).orElseThrow (() -> new BusinessRuleException("User not found with the given id."));
 	
-		release.setUser(user);
+		moviment.setUser(user);
 		
 		if(dto.getType() != null) {
 		
-			release.setType(ReleaseType.valueOf(dto.getType()));
+			moviment.setType(MovimentType.valueOf(dto.getType()));
 		}
 		
 		if(dto.getStatus() != null){
 			
-			release.setStatus(ReleaseStatus.valueOf(dto.getStatus()));
+			moviment.setStatus(MovimentStatus.valueOf(dto.getStatus()));
 		}
 		
-		return release;
+		return moviment;
 	}
 }
