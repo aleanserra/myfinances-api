@@ -65,7 +65,7 @@ public class MovimentResource {
 		
 		try {
 		Moviment entity = convert(dto);
-		service.save(entity);
+		entity = service.save(entity);
 		return new  ResponseEntity(entity, HttpStatus.CREATED) ;
 		}catch (BusinessRuleException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
@@ -84,7 +84,7 @@ public class MovimentResource {
 				return ResponseEntity.badRequest().body(e.getMessage());
 			}
 		}).orElseGet(() -> 
-			new ResponseEntity("Relese not found in DB.", HttpStatus.BAD_REQUEST));
+			new ResponseEntity("Moviment not found in DB.", HttpStatus.BAD_REQUEST));
 	}
 	
 	@PutMapping("{id}/update-status")
@@ -104,7 +104,7 @@ public class MovimentResource {
 				return ResponseEntity.badRequest().body(e.getMessage());
 			}
 		}).orElseGet(() -> 
-		new ResponseEntity("Relese not found in DB.", HttpStatus.BAD_REQUEST));
+		new ResponseEntity("Moviment not found in DB.", HttpStatus.BAD_REQUEST));
 	}
 	
 	@DeleteMapping("{id}")
@@ -113,9 +113,10 @@ public class MovimentResource {
 			service.delete(entity);
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
 		}).orElseGet(() ->
-		new ResponseEntity("Relese not found in DB.", HttpStatus.BAD_REQUEST));
+		new ResponseEntity("Moviment not found in DB.", HttpStatus.BAD_REQUEST));
 	}
 	
+	//Converte o DTO de movimento em entidade JPA
 	private Moviment convert(MovimentDTO dto) {
 		
 		Moviment moviment = new Moviment();
