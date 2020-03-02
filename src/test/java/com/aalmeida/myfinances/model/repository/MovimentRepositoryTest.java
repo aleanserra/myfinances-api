@@ -33,7 +33,7 @@ public class MovimentRepositoryTest{
     TestEntityManager entityManager;
 
     @Test
-    public void deveSalvarUmMovimento(){
+    public void shouldSaveAMoviment(){
         Moviment moviment = createMoviment();
 
         moviment = repository.save(moviment);
@@ -42,7 +42,7 @@ public class MovimentRepositoryTest{
     }
 
     @Test
-    public void deveDeletarUmMovimento(){
+    public void shouldDeleteAMoviment(){
         Moviment moviment = createAndPersistMoviment();
 
         moviment = entityManager.find(Moviment.class, moviment.getId());
@@ -54,7 +54,7 @@ public class MovimentRepositoryTest{
         assertThat(movimentNonexistent).isNull();
     }
     @Test
-    public void deveAtualizarUmMovimento(){
+    public void shouldUpdateAMoviment(){
         Moviment moviment = createAndPersistMoviment();
 
         moviment.setYear(2018);
@@ -71,7 +71,7 @@ public class MovimentRepositoryTest{
     }
 
     @Test
-    public void deveBuscarUmMovimentoPorId(){
+    public void shouldSearchAMovimentById(){
         Moviment moviment = createAndPersistMoviment();
 
         Optional<Moviment> movimentFound = repository.findById(moviment.getId());
@@ -85,7 +85,7 @@ public class MovimentRepositoryTest{
         return moviment;
     }
 
-    private Moviment createMoviment(){
+    public static Moviment createMoviment(){
         return Moviment.builder()
                             .year(2020)
                             .month(1)
