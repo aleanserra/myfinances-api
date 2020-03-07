@@ -12,3 +12,13 @@ Back end project
     Deseja-se cadastrar os movimentos de receita e despesa de cada mês, com seu valor e descrição. 
     Ao cadastrar, ele ficará pendente. Haverá opção de cancelá-lo ou efetivá-lo. Ao efetivá-lo, ele incorpora o saldo. 
     Os usuários poderão consultar seus movimentos, filtrando-os por ano, mês, descrição ou tipo de movimento.
+------------------------------------------------------------------------------------------------------------------------
+
+•   Tecnologias
+
+    Java, Spring Boot (spring data, spring framework), PostgreSQL
+    
+•   Ferramentas
+
+    Maven, Visual Studio Code, GitHub, Postman.
+    
