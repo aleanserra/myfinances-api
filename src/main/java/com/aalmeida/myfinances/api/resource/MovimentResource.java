@@ -31,47 +31,50 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/moviments")
 @RequiredArgsConstructor
 public class MovimentResource {
-	
+
 	private final MovimentService service;
 	private final UserService userService;
-	
+
 	@GetMapping
-	public ResponseEntity search(
-			@RequestParam(value = "description", required = false) String description,
+	public ResponseEntity search(@RequestParam(value = "description", required = false) String description,
 			@RequestParam(value = "month", required = false) Integer month,
-			@RequestParam(value = "year", required = false) Integer year,
-			@RequestParam("user") Long idUser
-			) {
+			@RequestParam(value = "year", required = false) Integer year, @RequestParam("user") Long idUser) {
 		Moviment movimentFilter = new Moviment();
 		movimentFilter.setDescription(description);
 		movimentFilter.setMonth(month);
 		movimentFilter.setYear(year);
-		
+
 		Optional<User> user = userService.getById(idUser);
-		
-		if(!user.isPresent()) {
+
+		if (!user.isPresent()) {
 			return ResponseEntity.badRequest().body("Can not search. User not found with given id");
-		}else {
+		} else {
 			movimentFilter.setUser(user.get());
 		}
-		
+
 		List<Moviment> moviments = service.search(movimentFilter);
-		
+
 		return ResponseEntity.ok(moviments);
 	}
-	
+
+	@GetMapping("{id}")
+	public ResponseEntity getMoviment(@PathVariable("id") Long id) {
+		return service.getById(id).map(moviment -> new ResponseEntity(convert(moviment), HttpStatus.OK))
+				.orElseGet(() -> new ResponseEntity(HttpStatus.NOT_FOUND));
+	}
+
 	@PostMapping
 	public ResponseEntity save(@RequestBody MovimentDTO dto) {
-		
+
 		try {
-		Moviment entity = convert(dto);
-		entity = service.save(entity);
-		return new  ResponseEntity(entity, HttpStatus.CREATED) ;
-		}catch (BusinessRuleException e) {
+			Moviment entity = convert(dto);
+			entity = service.save(entity);
+			return new ResponseEntity(entity, HttpStatus.CREATED);
+		} catch (BusinessRuleException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
-	
+
 	@PutMapping("{id}")
 	public ResponseEntity update(@PathVariable("id") Long id, @RequestBody MovimentDTO dto) {
 		return service.getById(id).map(entity -> {
@@ -80,66 +83,71 @@ public class MovimentResource {
 				moviment.setId(entity.getId());
 				service.update(moviment);
 				return ResponseEntity.ok(moviment);
-			}catch (BusinessRuleException e) {
+			} catch (BusinessRuleException e) {
 				return ResponseEntity.badRequest().body(e.getMessage());
 			}
-		}).orElseGet(() -> 
-			new ResponseEntity("Moviment not found in DB.", HttpStatus.BAD_REQUEST));
+		}).orElseGet(() -> new ResponseEntity("Moviment not found in DB.", HttpStatus.BAD_REQUEST));
 	}
-	
+
 	@PutMapping("{id}/update-status")
-	public ResponseEntity updateStatus(@PathVariable("id") Long id, @RequestBody UpdateStatusDTO dto){
-		return service.getById(id).map(entity ->{
+	public ResponseEntity updateStatus(@PathVariable("id") Long id, @RequestBody UpdateStatusDTO dto) {
+		return service.getById(id).map(entity -> {
 			MovimentStatus selectedStatus = MovimentStatus.valueOf(dto.getStatus());
-			
-			if(selectedStatus == null) {
+
+			if (selectedStatus == null) {
 				return ResponseEntity.badRequest().body("Can not be updated. Invalid status.");
 			}
 			try {
-				
+
 				entity.setStatus(selectedStatus);
 				service.update(entity);
 				return ResponseEntity.ok(entity);
-			}catch (BusinessRuleException e) {
+			} catch (BusinessRuleException e) {
 				return ResponseEntity.badRequest().body(e.getMessage());
 			}
-		}).orElseGet(() -> 
-		new ResponseEntity("Moviment not found in DB.", HttpStatus.BAD_REQUEST));
+		}).orElseGet(() -> new ResponseEntity("Moviment not found in DB.", HttpStatus.BAD_REQUEST));
 	}
-	
+
 	@DeleteMapping("{id}")
 	public ResponseEntity delete(@PathVariable("id") Long id) {
-		return service.getById(id).map(entity ->{
+		return service.getById(id).map(entity -> {
 			service.delete(entity);
 			return new ResponseEntity(HttpStatus.NO_CONTENT);
-		}).orElseGet(() ->
-		new ResponseEntity("Moviment not found in DB.", HttpStatus.BAD_REQUEST));
+		}).orElseGet(() -> new ResponseEntity("Moviment not found in DB.", HttpStatus.BAD_REQUEST));
 	}
-	
-	//Converte o DTO de movimento em entidade JPA
+
+	private MovimentDTO convert(Moviment moviment) {
+		return MovimentDTO.builder().id(moviment.getId()).description(moviment.getDescription())
+				.value(moviment.getValue()).month(moviment.getMonth()).year(moviment.getYear())
+				.status(moviment.getStatus().name()).type(moviment.getType().name()).user(moviment.getUser().getId())
+				.build();
+	}
+
+	// Converte o DTO de movimento em entidade JPA
 	private Moviment convert(MovimentDTO dto) {
-		
+
 		Moviment moviment = new Moviment();
 		moviment.setId(dto.getId());
 		moviment.setDescription(dto.getDescription());
 		moviment.setYear(dto.getYear());
 		moviment.setMonth(dto.getMonth());
 		moviment.setValue(dto.getValue());
-		
-		User user = userService.getById(dto.getUser()).orElseThrow (() -> new BusinessRuleException("User not found with the given id."));
-	
+
+		User user = userService.getById(dto.getUser())
+				.orElseThrow(() -> new BusinessRuleException("User not found with the given id."));
+
 		moviment.setUser(user);
-		
-		if(dto.getType() != null) {
-		
+
+		if (dto.getType() != null) {
+
 			moviment.setType(MovimentType.valueOf(dto.getType()));
 		}
-		
-		if(dto.getStatus() != null){
-			
+
+		if (dto.getStatus() != null) {
+
 			moviment.setStatus(MovimentStatus.valueOf(dto.getStatus()));
 		}
-		
+
 		return moviment;
 	}
 }
