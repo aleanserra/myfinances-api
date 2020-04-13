@@ -108,9 +108,9 @@ public class MovimentServiceImpl implements MovimentService {
 	@Transactional(readOnly = true)
 	public BigDecimal obtainBalanceByUser(Long id) {
 		BigDecimal income = repository.obtainBalanceByMovimentTypeAndUserAndStatus(id, MovimentType.INCOME,
-				MovimentStatus.RELEASED);
+				MovimentStatus.EFFECTIVED);
 		BigDecimal outgo = repository.obtainBalanceByMovimentTypeAndUserAndStatus(id, MovimentType.OUTGO,
-				MovimentStatus.RELEASED);
+				MovimentStatus.EFFECTIVED);
 
 		if (income == null) {
 			income = BigDecimal.ZERO;

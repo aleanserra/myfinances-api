@@ -43,7 +43,7 @@ public class MovimentServiceTest {
 
         Moviment movimentSaved = MovimentRepositoryTest.createMoviment();
         movimentSaved.setId(1l);
-        movimentSaved.setStatus(MovimentStatus.RELEASED);
+        movimentSaved.setStatus(MovimentStatus.EFFECTIVED);
         Mockito.when(repository.save(movimentToSave)).thenReturn(movimentSaved);
 
         // when
@@ -51,7 +51,7 @@ public class MovimentServiceTest {
 
         // then
         Assertions.assertThat(moviment.getId()).isEqualTo(movimentSaved.getId());
-        Assertions.assertThat(moviment.getStatus()).isEqualTo(MovimentStatus.RELEASED);
+        Assertions.assertThat(moviment.getStatus()).isEqualTo(MovimentStatus.EFFECTIVED);
     }
 
     @Test
@@ -139,7 +139,7 @@ public class MovimentServiceTest {
         moviment.setId(1l);
         moviment.setStatus(MovimentStatus.PENDING);
 
-        MovimentStatus newStatus = MovimentStatus.RELEASED;
+        MovimentStatus newStatus = MovimentStatus.EFFECTIVED;
         Mockito.doReturn(moviment).when(service).update(moviment);
 
         service.updateStatus(moviment, newStatus);
