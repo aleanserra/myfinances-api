@@ -23,7 +23,6 @@ import org.springframework.data.domain.Example;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 public class MovimentServiceTest {
@@ -35,28 +34,28 @@ public class MovimentServiceTest {
     MovimentRepository repository;
 
     @Test
-    public void shoulSaveAMoviment(){
-        
-        //given
+    public void shoulSaveAMoviment() {
+
+        // given
         Moviment movimentToSave = MovimentRepositoryTest.createMoviment();
 
         Mockito.doNothing().when(service).validate(movimentToSave);
-        
+
         Moviment movimentSaved = MovimentRepositoryTest.createMoviment();
         movimentSaved.setId(1l);
         movimentSaved.setStatus(MovimentStatus.RELEASED);
         Mockito.when(repository.save(movimentToSave)).thenReturn(movimentSaved);
-        
-        //when
+
+        // when
         Moviment moviment = service.save(movimentToSave);
-        
-        //then
+
+        // then
         Assertions.assertThat(moviment.getId()).isEqualTo(movimentSaved.getId());
         Assertions.assertThat(moviment.getStatus()).isEqualTo(MovimentStatus.RELEASED);
     }
 
     @Test
-    public void shouldNotSaveAMovimentWhenErrorValidate(){
+    public void shouldNotSaveAMovimentWhenErrorValidate() {
         Moviment movimentToSave = MovimentRepositoryTest.createMoviment();
         Mockito.doThrow(BusinessRuleException.class).when(service).validate(movimentToSave);
 
@@ -66,26 +65,26 @@ public class MovimentServiceTest {
     }
 
     @Test
-    public void shouldUpdateAMoviment(){
-        
-        //given
+    public void shouldUpdateAMoviment() {
+
+        // given
         Moviment movimentSaved = MovimentRepositoryTest.createMoviment();
         movimentSaved.setId(1l);
         movimentSaved.setStatus(MovimentStatus.PENDING);
-        
+
         Mockito.doNothing().when(service).validate(movimentSaved);
-        
+
         Mockito.when(repository.save(movimentSaved)).thenReturn(movimentSaved);
-        
-        //when
+
+        // when
         service.update(movimentSaved);
-        
-        //then
+
+        // then
         Mockito.verify(repository, Mockito.times(1)).save(movimentSaved);
     }
 
     @Test
-    public void shouldThrowErrorWhenUpdateAMovimentNotSaved(){
+    public void shouldThrowErrorWhenUpdateAMovimentNotSaved() {
         Moviment movimentToSave = MovimentRepositoryTest.createMoviment();
 
         Assertions.catchThrowableOfType(() -> service.update(movimentToSave), NullPointerException.class);
@@ -94,33 +93,33 @@ public class MovimentServiceTest {
     }
 
     @Test
-    public void shouldDeleteAMoviment(){
-        //given
+    public void shouldDeleteAMoviment() {
+        // given
         Moviment moviment = MovimentRepositoryTest.createMoviment();
         moviment.setId(1l);
 
-        //when
+        // when
         service.delete(moviment);
 
-        //then
+        // then
         Mockito.verify(repository).delete(moviment);
 
     }
-    
+
     @Test
-    public void shouldThrowErrorWhenTryToDeleteAMovimentNotSaved(){
-        //given
+    public void shouldThrowErrorWhenTryToDeleteAMovimentNotSaved() {
+        // given
         Moviment moviment = MovimentRepositoryTest.createMoviment();
 
-        //when
+        // when
         Assertions.catchThrowableOfType(() -> service.delete(moviment), NullPointerException.class);
 
-        //then
+        // thenn
         Mockito.verify(repository, Mockito.never()).delete(moviment);
     }
 
     @Test
-    public void shouldFilterMoviments(){
+    public void shouldFilterMoviments() {
 
         Moviment moviment = MovimentRepositoryTest.createMoviment();
         moviment.setId(1l);
@@ -130,16 +129,12 @@ public class MovimentServiceTest {
 
         List<Moviment> result = service.search(moviment);
 
-        Assertions
-            .assertThat(result)
-            .isNotEmpty()
-            .hasSize(1)
-            .contains(moviment);
+        Assertions.assertThat(result).isNotEmpty().hasSize(1).contains(moviment);
 
     }
 
     @Test
-    public void shouldUpdateMovimentStatus(){
+    public void shouldUpdateMovimentStatus() {
         Moviment moviment = MovimentRepositoryTest.createMoviment();
         moviment.setId(1l);
         moviment.setStatus(MovimentStatus.PENDING);
@@ -154,7 +149,7 @@ public class MovimentServiceTest {
     }
 
     @Test
-    public void shouldGetAMovimentById(){
+    public void shouldGetAMovimentById() {
         Long id = 1l;
 
         Moviment moviment = MovimentRepositoryTest.createMoviment();
@@ -163,12 +158,12 @@ public class MovimentServiceTest {
         Mockito.when(repository.findById(id)).thenReturn(Optional.of(moviment));
 
         Optional<Moviment> result = service.getById(id);
-        
+
         Assertions.assertThat(result.isPresent()).isTrue();
     }
 
     @Test
-    public void shouldReturnNullWhenMovimentNotExist(){
+    public void shouldReturnNullWhenMovimentNotExist() {
         Long id = 1l;
 
         Moviment moviment = MovimentRepositoryTest.createMoviment();
@@ -177,70 +172,70 @@ public class MovimentServiceTest {
         Mockito.when(repository.findById(id)).thenReturn(Optional.empty());
 
         Optional<Moviment> result = service.getById(id);
-        
+
         Assertions.assertThat(result.isPresent()).isFalse();
     }
 
     @Test
-    public void shouldThrowErrorWhenValidateAMoviment(){
+    public void shouldThrowErrorWhenValidateAMoviment() {
         Moviment moviment = new Moviment();
 
-        Throwable error = Assertions.catchThrowable(()-> service.validate(moviment));
+        Throwable error = Assertions.catchThrowable(() -> service.validate(moviment));
         Assertions.assertThat(error).isInstanceOf(BusinessRuleException.class).hasMessage("Invalid description");
 
         moviment.setDescription("");
 
         error = Assertions.catchThrowable(() -> service.validate(moviment));
         Assertions.assertThat(error).isInstanceOf(BusinessRuleException.class).hasMessage("Invalid description");
-        
+
         moviment.setDescription("Salary");
-        
+
         error = Assertions.catchThrowable(() -> service.validate(moviment));
         Assertions.assertThat(error).isInstanceOf(BusinessRuleException.class).hasMessage("Invalid month");
 
         moviment.setYear(0);
 
-        error = Assertions.catchThrowable( () -> service.validate(moviment) );
-		Assertions.assertThat(error).isInstanceOf(BusinessRuleException.class).hasMessage("Invalid month");
-		
-		moviment.setYear(13);
-		
-		error = Assertions.catchThrowable( () -> service.validate(moviment) );
-		Assertions.assertThat(error).isInstanceOf(BusinessRuleException.class).hasMessage("Invalid month");
-		
-		moviment.setMonth(1);
-		
-		error = Assertions.catchThrowable( () -> service.validate(moviment) );
-		Assertions.assertThat(error).isInstanceOf(BusinessRuleException.class).hasMessage("Invalid year");
-		
-		moviment.setYear(202);
-		
-		error = Assertions.catchThrowable( () -> service.validate(moviment) );
-		Assertions.assertThat(error).isInstanceOf(BusinessRuleException.class).hasMessage("Invalid year");
-		
-		moviment.setYear(2020);
-		
-		error = Assertions.catchThrowable( () -> service.validate(moviment) );
-		Assertions.assertThat(error).isInstanceOf(BusinessRuleException.class).hasMessage("Invalid user");
-		
-		moviment.setUser(new User());
-		
-		error = Assertions.catchThrowable( () -> service.validate(moviment) );
-		Assertions.assertThat(error).isInstanceOf(BusinessRuleException.class).hasMessage("Invalid user");
-		
-		moviment.getUser().setId(1l);
-		
-		error = Assertions.catchThrowable( () -> service.validate(moviment) );
-		Assertions.assertThat(error).isInstanceOf(BusinessRuleException.class).hasMessage("Invalid value");
-		
-		moviment.setValue(BigDecimal.ZERO);
-		
-		error = Assertions.catchThrowable( () -> service.validate(moviment) );
-		Assertions.assertThat(error).isInstanceOf(BusinessRuleException.class).hasMessage("Invalid value");
-		
-		moviment.setValue(BigDecimal.valueOf(1));
-		
-		error = Assertions.catchThrowable( () -> service.validate(moviment) );
-		Assertions.assertThat(error).isInstanceOf(BusinessRuleException.class).hasMessage("Invalid type");
+        error = Assertions.catchThrowable(() -> service.validate(moviment));
+        Assertions.assertThat(error).isInstanceOf(BusinessRuleException.class).hasMessage("Invalid month");
+
+        moviment.setYear(13);
+
+        error = Assertions.catchThrowable(() -> service.validate(moviment));
+        Assertions.assertThat(error).isInstanceOf(BusinessRuleException.class).hasMessage("Invalid month");
+
+        moviment.setMonth(1);
+
+        error = Assertions.catchThrowable(() -> service.validate(moviment));
+        Assertions.assertThat(error).isInstanceOf(BusinessRuleException.class).hasMessage("Invalid year");
+
+        moviment.setYear(202);
+
+        error = Assertions.catchThrowable(() -> service.validate(moviment));
+        Assertions.assertThat(error).isInstanceOf(BusinessRuleException.class).hasMessage("Invalid year");
+
+        moviment.setYear(2020);
+
+        error = Assertions.catchThrowable(() -> service.validate(moviment));
+        Assertions.assertThat(error).isInstanceOf(BusinessRuleException.class).hasMessage("Invalid user");
+
+        moviment.setUser(new User());
+
+        error = Assertions.catchThrowable(() -> service.validate(moviment));
+        Assertions.assertThat(error).isInstanceOf(BusinessRuleException.class).hasMessage("Invalid user");
+
+        moviment.getUser().setId(1l);
+
+        error = Assertions.catchThrowable(() -> service.validate(moviment));
+        Assertions.assertThat(error).isInstanceOf(BusinessRuleException.class).hasMessage("Invalid value");
+
+        moviment.setValue(BigDecimal.ZERO);
+
+        error = Assertions.catchThrowable(() -> service.validate(moviment));
+        Assertions.assertThat(error).isInstanceOf(BusinessRuleException.class).hasMessage("Invalid value");
+
+        moviment.setValue(BigDecimal.valueOf(1));
+
+        error = Assertions.catchThrowable(() -> service.validate(moviment));
+        Assertions.assertThat(error).isInstanceOf(BusinessRuleException.class).hasMessage("Invalid type");
     }
 }
